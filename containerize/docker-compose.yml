@@ -1,0 +1,25 @@
+version: "3"
+services:
+  app:
+    container_name: containerize_app_1
+    # your code goes here ...
+    build:
+      context: ./app # Docker will use the files in the ./app directory to build the image
+    volumes:
+      - ./app/src:/app/src:ro # This mounts the ./app/src directory on the host to the /app/src directory in the container, as Read Only
+    expose:
+      - "8000" # exposes port 8000 of the app service
+  
+  nginx:
+    container_name: containerize_nginx_1
+    # your code goes here ...
+    build:
+      context: ./nginx # Docker will use the files in the ./nginx directory to build the image
+    ports: # port mapping on the host to container port
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - app  # Docker Compose will start the app service before the nginx service.
+    volumes:
+      - ./nginx/files/localhost.crt:/etc/nginx/ssl/localhost.crt:ro # mounts the ./nginx/files/localhost.crt file on the host to the /etc/nginx/ssl/localhost.crt in the container as read only
+      - ./nginx/files/localhost.key:/etc/nginx/ssl/localhost.key:ro # mounts the ./nginx/files/localhost.key file on the host to the /etc/nginx/ssl/localhost.key in the container as read only
